@@ -1,0 +1,34 @@
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+select = ["E", "F", "B", "Q", "I", "N", "ASYNC", "PTH"]
+ignore = ["E501"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = false
+warn_unused_ignores = true
+disallow_untyped_defs = true
+strict_equality = true
+
+[[tool.mypy.overrides]]
+module = ["app.*"]
+disallow_untyped_defs = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = "-v --strict-markers"
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
