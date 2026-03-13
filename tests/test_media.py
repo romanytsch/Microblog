@@ -1,6 +1,7 @@
+import tempfile
+
 import pytest
 from httpx import AsyncClient
-import tempfile
 
 
 @pytest.mark.asyncio
@@ -14,7 +15,7 @@ async def test_upload_media(client: AsyncClient):
             response = await client.post(
                 "/api/medias",
                 headers={"api-key": "user1-1234-5678-9abc-def012345678"},
-                files={"file": ("test.jpg", f, "image/jpeg")}
+                files={"file": ("test.jpg", f, "image/jpeg")},
             )
 
     assert response.status_code == 200

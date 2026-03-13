@@ -1,8 +1,8 @@
 import pytest
 from sqlalchemy import select
-from app.models import User, Tweet, follows
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.database import get_db
+
+from app.models import User, follows
 
 
 @pytest.mark.asyncio

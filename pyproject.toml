@@ -1,6 +1,8 @@
 [tool.ruff]
 line-length = 88
 target-version = "py311"
+
+[tool.ruff.lint]
 select = ["E", "F", "B", "Q", "I", "N", "ASYNC", "PTH"]
 ignore = ["E501"]
 
@@ -8,18 +10,3 @@ ignore = ["E501"]
 quote-style = "double"
 indent-style = "space"
 line-ending = "lf"
-
-[tool.mypy]
-python_version = "3.11"
-warn_return_any = false
-warn_unused_ignores = true
-disallow_untyped_defs = true
-strict_equality = true
-
-[[tool.mypy.overrides]]
-module = ["app.*"]
-disallow_untyped_defs = false
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"

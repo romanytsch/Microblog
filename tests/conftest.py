@@ -1,43 +1,37 @@
 import pytest
-import asyncio
 from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+
 from app.database import get_db
 from app.main import app
+from app.models import Base
 
-# База для тестов
-TEST_DATABASE_URL = "postgresql+asyncpg://postgres:password@db:5432/test_db"
+# Используем SQLite для простоты тестов (НЕ PostgreSQL)
+TEST_DATABASE_URL = "sqlite+aiosqlite:///./test.db"
 
 
 @pytest.fixture(scope="session")
-async def test_db_engine():
-    """Создаёт движок БД для тестов"""
+async def engine():
     engine = create_async_engine(TEST_DATABASE_URL, echo=False)
     async with engine.begin() as conn:
-        from app.models import Base
         await conn.run_sync(Base.metadata.create_all)
     yield engine
     await engine.dispose()
 
 
 @pytest.fixture
-async def db_session(test_db_engine):  # ✅ ИСПРАВЛЕНО!
-    """AsyncSession для каждого теста"""
-    async_session = async_sessionmaker(test_db_engine, expire_on_commit=False)
-    async with async_session() as session:
-        yield session
+async def session(engine):
+    async_session = async_sessionmaker(engine, expire_on_commit=False)
+    async with async_session() as s:
+        yield s
 
 
 @pytest.fixture
-async def client(db_session: AsyncSession):
-    """AsyncClient для API тестов"""
+async def client(session):
+    def override_get_db():
+        return session
 
-    async def override_db_dependency():
-        return db_session
-
-    app.dependency_overrides[get_db] = override_db_dependency
-
-    async with AsyncClient(app=app, base_url="http://test") as ac:
-        yield ac
-
+    app.dependency_overrides[get_db] = override_get_db
+    async with AsyncClient(app=app, base_url="http://test") as c:
+        yield c
     app.dependency_overrides.clear()

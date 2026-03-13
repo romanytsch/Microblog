@@ -8,7 +8,7 @@ class TestTweets:
         response = await client.post(
             "/api/tweets",
             headers={"api-key": "user1-1234-5678-9abc-def012345678"},
-            data={"tweet_data": "Тест #1"}
+            data={"tweet_data": "Тест #1"},
         )
         assert response.status_code == 200
         data = response.json()
@@ -21,7 +21,7 @@ class TestTweets:
         resp = await client.post(
             "/api/tweets",
             headers={"api-key": "user1-1234-5678-9abc-def012345678"},
-            data={"tweet_data": "Удаляемый"}
+            data={"tweet_data": "Удаляемый"},
         )
         tweet_id = resp.json()["tweet_id"]
 
@@ -35,7 +35,7 @@ class TestTweets:
         resp = await client.post(
             "/api/tweets",
             headers={"api-key": "user1-1234-5678-9abc-def012345678"},
-            data={"tweet_data": "Лайкни меня"}
+            data={"tweet_data": "Лайкни меня"},
         )
         tweet_id = resp.json()["tweet_id"]
 
@@ -52,8 +52,7 @@ class TestUsers:
     @pytest.mark.asyncio
     async def test_get_me(self, client: AsyncClient):
         response = await client.get(
-            "/api/users/me",
-            headers={"api-key": "user1-1234-5678-9abc-def012345678"}
+            "/api/users/me", headers={"api-key": "user1-1234-5678-9abc-def012345678"}
         )
         assert response.status_code == 200
         data = response.json()
@@ -64,6 +63,6 @@ class TestUsers:
         # Подписываемся на user2
         response = await client.post(
             "/api/users/2/follow",
-            headers={"api-key": "user1-1234-5678-9abc-def012345678"}
+            headers={"api-key": "user1-1234-5678-9abc-def012345678"},
         )
         assert response.status_code == 200
