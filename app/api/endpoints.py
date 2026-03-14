@@ -2,7 +2,7 @@ import os
 import uuid
 
 from fastapi import APIRouter, Depends, File, Form, Header, HTTPException, UploadFile
-from sqlalchemy import and_, delete, select
+from sqlalchemy import and_, delete, select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
@@ -12,8 +12,8 @@ router = APIRouter()
 
 # Инициализация тестовых пользователей
 test_users = {
-    "user1-1234-5678-9abc-def012345678": "Иван Иванов",
-    "user2-5678-9abc-def01- 23456789abcd": "Мария Петрова",
+    "user1": "Иван Иванов",
+    "user2": "Мария Петрова",
 }
 
 
@@ -165,7 +165,7 @@ async def get_feed(
     result = await db.execute(
         select(Tweet)
         .filter(Tweet.author_id.in_(following_ids))
-        .order_by(Tweet.created_at.desc())
+        .order_by(func.count(likes.c.tweet_id).desc(), Tweet.created_at.desc())
     )
     tweets = result.scalars().all()
 
