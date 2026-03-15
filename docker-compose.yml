@@ -1,0 +1,44 @@
+  services:
+    db:
+      image: postgres:16-alpine
+      environment:
+        POSTGRES_DB: microblog
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+      ports:
+        - "5433:5432"
+      healthcheck:
+        test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+        interval: 10s
+        retries: 5
+
+    app:
+      build: .
+      ports:
+        - "8000:8000"
+      environment:
+        POSTGRES_HOST: db
+        POSTGRES_DB: microblog
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+        POSTGRES_PORT: 5432
+      volumes:
+        - ./static/media:/app/static/media
+      depends_on:
+        db:
+          condition: service_healthy
+
+    frontend:
+      image: nginx:latest
+      ports:
+        - "80:80"
+      volumes:
+        - ./frontend/dist:/usr/share/nginx/html:ro
+        - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      depends_on:
+        - app
+
+  volumes:
+    postgres_data:
