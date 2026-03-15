@@ -1,13 +1,21 @@
 import os
 import uuid
-from typing import List
 
-from fastapi import APIRouter, Depends, File, Form, Header, HTTPException, UploadFile
-from sqlalchemy import and_, delete, select, func, update
+from fastapi import (
+    APIRouter,
+    Body,
+    Depends,
+    File,
+    Form,
+    Header,
+    HTTPException,
+    UploadFile,
+)
+from sqlalchemy import and_, delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
-from app.models import Tweet, User, follows, likes, Media
+from app.models import Tweet, User, follows, likes
 
 router = APIRouter()
 
@@ -18,8 +26,9 @@ test_users = {
     "user2": "Мария Петрова",
 }
 
+
 async def get_current_user(
-        api_key: str = Header(None), db: AsyncSession = Depends(get_db)
+    api_key: str = Header(None), db: AsyncSession = Depends(get_db)
 ) -> User:
     if not api_key:
         raise HTTPException(401, "Отсутствует ключ API")
@@ -35,10 +44,10 @@ async def get_current_user(
         await db.refresh(user)
     return user
 
+
 @router.get("/users/me")
 async def get_me(
-        current_user: User = Depends(get_current_user),
-        db: AsyncSession = Depends(get_db)
+    current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
 ):
     print("🚀 /api/users/me СРАБОТАЛ!")
     return {
@@ -47,15 +56,16 @@ async def get_me(
             "id": current_user.id,
             "name": current_user.name,
             "followers": [],
-            "following": []
-        }
+            "following": [],
+        },
     }
+
 
 @router.get("/users/{user_id}")
 async def get_user_profile(
-        user_id: int,
-        current_user: User = Depends(get_current_user),
-        db: AsyncSession = Depends(get_db)
+    user_id: int,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
 ):
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
@@ -63,20 +73,20 @@ async def get_user_profile(
     if not user:
         raise HTTPException(
             404,
-            {"result": False, "error_type": "UserNotFound", "error_message": "Пользователь не найден"}
+            {
+                "result": False,
+                "error_type": "UserNotFound",
+                "error_message": "Пользователь не найден",
+            },
         )
 
     followers_result = await db.execute(
-        select(User.id, User.name).join(
-            follows, follows.c.following_id == user.id
-        )
+        select(User.id, User.name).join(follows, follows.c.following_id == user.id)
     )
     followers = [{"id": row[0], "name": row[1]} for row in followers_result.fetchall()]
 
     following_result = await db.execute(
-        select(User.id, User.name).join(
-            follows, follows.c.follower_id == user.id
-        )
+        select(User.id, User.name).join(follows, follows.c.follower_id == user.id)
     )
     following = [{"id": row[0], "name": row[1]} for row in following_result.fetchall()]
 
@@ -86,9 +96,10 @@ async def get_user_profile(
             "id": user.id,
             "name": user.name,
             "followers": followers,
-            "following": following
-        }
+            "following": following,
+        },
     }
+
 
 # 🔥 ИСПРАВЛЕННЫЙ GET /tweets (MOCK - БЕЗ SQL ОШИБОК!)
 @router.get("/tweets")
@@ -103,7 +114,7 @@ async def get_feed(current_user: User = Depends(get_current_user)):
                 "author_id": 1,
                 "author_name": "Пользователь",
                 "likes_count": 42,
-                "created_at": "2026-03-15T17:00:00Z"
+                "created_at": "2026-03-15T17:00:00Z",
             },
             {
                 "id": 2,
@@ -111,41 +122,41 @@ async def get_feed(current_user: User = Depends(get_current_user)):
                 "author_id": 1,
                 "author_name": "Пользователь",
                 "likes_count": 1337,
-                "created_at": "2026-03-15T17:05:00Z"
-            }
-        ]
+                "created_at": "2026-03-15T17:05:00Z",
+            },
+        ],
     }
+
 
 @router.post("/tweets")
 async def create_tweet(
-    tweet_data: str = Form(None),  # ← None вместо ...
+    tweet_data: str = Form(None),  # curl -d
+    content: str = Body(None),  # Vue.js JSON
     current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
-    # 🔥 ФИКС: если пусто - используем тело запроса
-    content = (tweet_data or "").strip()
-    if not content:
+    # 🔥 Берем первое непустое поле
+    text = (tweet_data or content or "").strip()
+    print(f"📝 Form='{tweet_data}' JSON='{content}' → '{text}'")
+
+    if not text:
         raise HTTPException(400, "Текст твита пустой!")
+    if len(text) > 280:
+        raise HTTPException(400, "Макс. 280 символов!")
 
-    if len(content) > 280:
-        raise HTTPException(
-            status_code=400,
-            detail={"result": False, "error_type": "ValidationError", "error_message": "Максимум 280 символов"}
-        )
-
-    tweet = Tweet(content=content, author_id=current_user.id)
+    tweet = Tweet(content=text, author_id=current_user.id)
     db.add(tweet)
     await db.commit()
     await db.refresh(tweet)
-
-    print(f"✅ Твит создан: ID={tweet.id}")
+    print(f"✅ Твит #{tweet.id}: '{text}'")
     return {"result": True, "tweet_id": tweet.id}
+
 
 @router.delete("/tweets/{tweet_id}")
 async def delete_tweet(
-        tweet_id: int,
-        current_user: User = Depends(get_current_user),
-        db: AsyncSession = Depends(get_db),
+    tweet_id: int,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
 ):
     result = await db.execute(
         delete(Tweet).where(
@@ -157,25 +168,35 @@ async def delete_tweet(
     await db.commit()
     return {"result": True}
 
+
 @router.post("/tweets/{tweet_id}/likes")
 async def like_tweet(
-        tweet_id: int,
-        current_user: User = Depends(get_current_user),
-        db: AsyncSession = Depends(get_db),
+    tweet_id: int,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
 ):
+    # 🔥 Проверяем существующий лайк
+    result = await db.execute(
+        select(likes).where(
+            and_(likes.c.user_id == current_user.id, likes.c.tweet_id == tweet_id)
+        )
+    )
+    if result.first():
+        print(f"Лайк уже есть: {current_user.id}→{tweet_id}")
+        return {"result": True}  # ✅ Не ошибка!
+
     stmt = likes.insert().values(user_id=current_user.id, tweet_id=tweet_id)
-    try:
-        await db.execute(stmt)
-        await db.commit()
-    except:
-        raise HTTPException(400, "Лайк уже поставлен")
+    await db.execute(stmt)
+    await db.commit()
+    print(f"Новый лайк: {current_user.id}→{tweet_id}")
     return {"result": True}
+
 
 @router.delete("/tweets/{tweet_id}/likes")
 async def unlike_tweet(
-        tweet_id: int,
-        current_user: User = Depends(get_current_user),
-        db: AsyncSession = Depends(get_db),
+    tweet_id: int,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
 ):
     result = await db.execute(
         delete(likes).where(
@@ -185,17 +206,19 @@ async def unlike_tweet(
     await db.commit()
     return {"result": True}
 
-# 🔥 ИСПРАВЛЕНА ОПЕЧАТКА: folloing_id → following_id
+
 @router.post("/users/{user_id}/follow")
 async def follow_user(
-        user_id: int,
-        current_user: User = Depends(get_current_user),
-        db: AsyncSession = Depends(get_db),
+    user_id: int,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
 ):
     if current_user.id == user_id:
         raise HTTPException(400, "Нельзя подписываться на себя")
 
-    stmt = follows.insert().values(follower_id=current_user.id, following_id=user_id)  # ✅ Исправлено!
+    stmt = follows.insert().values(
+        follower_id=current_user.id, following_id=user_id
+    )  # ✅ Исправлено!
     try:
         await db.execute(stmt)
         await db.commit()
@@ -203,11 +226,12 @@ async def follow_user(
         raise HTTPException(400, "Уже подписаны")
     return {"result": True}
 
+
 @router.delete("/users/{user_id}/follow")
 async def unfollow_user(
-        user_id: int,
-        current_user: User = Depends(get_current_user),
-        db: AsyncSession = Depends(get_db),
+    user_id: int,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
 ):
     result = await db.execute(
         delete(follows).where(
@@ -220,11 +244,12 @@ async def unfollow_user(
     await db.commit()
     return {"result": True}
 
+
 @router.post("/medias")
 async def upload_media(
-        file: UploadFile = File(...),
-        current_user: User = Depends(get_current_user),
-        db: AsyncSession = Depends(get_db),
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
 ):
     if not file.content_type.startswith("image/"):
         raise HTTPException(400, "Только изображения")
