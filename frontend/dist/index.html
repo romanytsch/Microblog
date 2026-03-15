@@ -1,167 +1,95 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" href="/favicon.ico" />
-  <title>twitter-clone</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/favicon.ico">
+  <title>Twitter Clone</title>
 
-  <!-- ВСЕ CSS файлы -->
+  <!-- ✅ ТОЛЬКО рабочие CSS (убраны ВСЕ prefetch/preload) -->
   <link href="/css/chunk-vendors.de691de6.css" rel="stylesheet">
   <link href="/css/app.45d81840.css" rel="stylesheet">
   <link href="/css/chunk-0420bcc4.d6bc3184.css" rel="stylesheet">
   <link href="/css/chunk-10e0d5b4.130d80ef.css" rel="stylesheet">
   <link href="/css/chunk-6f77c742.8d9a3d9c.css" rel="stylesheet">
   <link href="/css/chunk-732a3e8c.6334cd6b.css" rel="stylesheet">
-
-  <style>
-    /* Twitter цвета и базовые стили */
-    * { box-sizing: border-box; }
-    body {
-      background: linear-gradient(180deg,#000 0%,#15202b 100%) !important;
-      color: #fff !important;
-      font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-      margin: 0;
-      min-height: 100vh;
-      font-size: 14px;
-    }
-    .layout {
-      max-width: 1290px;
-      margin: 0 auto;
-      display: flex;
-      min-height: 100vh;
-    }
-  </style>
 </head>
-<body>
-  <div class="layout">
-    <!-- ЛЕВАЯ ПАНЕЛЬ (100% рабочая) -->
-    <aside class="layout-sidebar">
-      <div class="layout-sidebar-fixed-container">
-        <div class="sidebar-logo" style="padding:1rem;">
-          <span style="font-size:2rem;font-weight:900;color:#1da1f2;">X</span>
-        </div>
 
-        <nav class="sidebar-nav" style="padding:1rem 0;">
-          <a href="#" class="sidebar-item router-link-active" style="display:flex;align-items:center;padding:12px;border-radius:999px;margin-bottom:8px;">
-            <span class="sidebar-item-logo" style="width:2rem;height:2rem;margin-right:1rem;background:#1da1f2;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">🏠</span>
-            <span class="sidebar-item-content" style="font-weight:700;font-size:1.1rem;">Главная</span>
-          </a>
-
-          <a href="#" class="sidebar-item" style="display:flex;align-items:center;padding:12px;border-radius:999px;margin-bottom:8px;">
-            <span class="sidebar-item-logo" style="width:2rem;height:2rem;margin-right:1rem;background:#657786;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">🔍</span>
-            <span class="sidebar-item-content" style="font-weight:700;font-size:1.1rem;">Поиск</span>
-          </a>
-
-          <a href="#" class="sidebar-item" style="display:flex;align-items:center;padding:12px;border-radius:999px;margin-bottom:8px;">
-            <span class="sidebar-item-logo" style="width:2rem;height:2rem;margin-right:1rem;background:#657786;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">🔔</span>
-            <span class="sidebar-item-content" style="font-weight:700;font-size:1.1rem;">Уведомления</span>
-          </a>
-        </nav>
-
-        <div class="sidebar-tweet-button" style="background:#1da1f2;color:#fff;font-weight:700;padding:1rem;border-radius:999px;text-align:center;margin:2rem 1rem;cursor:pointer;">
-          Твитнуть
-        </div>
-
-        <!-- Профиль -->
-        <div class="sidebar-profile" style="display:flex;align-items:center;padding:1rem;border-radius:999px;margin:1rem;cursor:pointer;">
-          <div class="sidebar-profile-pic" style="width:3rem;height:3rem;border-radius:50%;background:#657786;margin-right:1rem;"></div>
-          <div style="flex-grow:1;">
-            <div style="font-weight:700;">Имя</div>
-            <div style="color:#657786;font-size:.9rem;">@username</div>
-          </div>
-          <div class="more" style="width:2rem;height:2rem;">···</div>
-        </div>
-      </div>
-    </aside>
-
-    <!-- ЦЕНТРАЛЬНАЯ КОЛОНКА (фид) -->
-    <main class="layout-flow" style="flex:1;border-left:1px solid #38444d;">
-      <!-- Создать твит -->
-      <div class="add-tweet" style="padding:1rem;border-bottom:1px solid #38444d;display:flex;">
-        <div class="add-tweet-profile" style="width:4rem;height:4rem;border-radius:50%;background:#657786;margin-right:1rem;"></div>
-        <div class="add-tweet-content" style="flex:1;">
-          <textarea placeholder="Что происходит?" style="width:100%;min-height:5rem;padding:1rem;background:transparent;border:none;color:#fff;font-size:1.1rem;resize:vertical;"></textarea>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding-top:1rem;">
-            <div style="display:flex;gap:1rem;">
-              <span style="padding:8px;border-radius:50%;cursor:pointer;">📎</span>
-              <span style="padding:8px;border-radius:50%;cursor:pointer;">📸</span>
-              <span style="padding:8px;border-radius:50%;cursor:pointer;">📹</span>
-            </div>
-            <button style="background:#1da1f2;color:#fff;border:none;padding:10px 20px;border-radius:999px;font-weight:700;cursor:pointer;">Твитнуть</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ТВИТЫ -->
-      <div class="tweet" style="padding:1rem;border-bottom:1px solid #38444d;display:flex;">
-        <div class="tweet-owner" style="width:4rem;height:4rem;border-radius:50%;background:#657786;margin-right:1rem;"></div>
-        <div class="tweet-content" style="flex:1;">
-          <div class="tweet-content-header" style="margin-bottom:0.5rem;">
-            <span style="font-weight:700;margin-right:0.5rem;">Имя Пользователя</span>
-            <span style="color:#657786;font-size:0.9rem;margin-right:0.5rem;">@username</span>
-            <span style="color:#657786;font-size:0.9rem;">· 1ч</span>
-          </div>
-          <div class="tweet-content-body" style="color:#fff;margin-bottom:1rem;">
-            Готовый Twitter/X клон! ✅ Все стили работают! Все кнопки активны! Hover эффекты работают!
-          </div>
-          <div class="tweet-content-actions" style="display:flex;justify-content:space-between;max-width:450px;">
-            <div style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;padding:8px;border-radius:4px;">
-              <span>💬</span><span style="color:#aab8c2;">12</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;padding:8px;border-radius:4px;">
-              <span>🔄</span><span style="color:#aab8c2;">34</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;padding:8px;border-radius:4px;">
-              <span style="color:#e0245e;">❤️</span><span style="color:#e0245e;">56</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;padding:8px;border-radius:4px;">
-              <span>📊</span><span style="color:#aab8c2;">1.2K</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Второй твит -->
-      <div class="tweet" style="padding:1rem;border-bottom:1px solid #38444d;display:flex;">
-        <div class="tweet-owner" style="width:4rem;height:4rem;border-radius:50%;background:#1da1f2;margin-right:1rem;"></div>
-        <div class="tweet-content" style="flex:1;">
-          <div class="tweet-content-header" style="margin-bottom:0.5rem;">
-            <span style="font-weight:700;margin-right:0.5rem;">Другой пользователь</span>
-            <span style="color:#657786;font-size:0.9rem;margin-right:0.5rem;">@friend</span>
-            <span style="color:#657786;font-size:0.9rem;">· 2ч</span>
-          </div>
-          <div class="tweet-content-body" style="color:#fff;margin-bottom:1rem;">
-            Отличный проект! Hover эффекты работают идеально! 👌
-          </div>
-        </div>
-      </div>
-    </main>
-
-    <!-- ПРАВАЯ ПАНЕЛЬ -->
-    <aside class="layout-for-you" style="width:330px;padding-left:1rem;">
-      <div class="searchbar" style="background:rgba(101,119,134,.3);padding:1rem;border-radius:999px;margin-bottom:1rem;">
-        <div style="display:flex;align-items:center;">
-          <span style="width:1.2rem;height:1.2rem;margin-right:1rem;">🔍</span>
-          <input placeholder="Поиск" style="background:transparent;border:none;color:#fff;flex:1;font-size:1rem;outline:none;">
-        </div>
-      </div>
-
-      <div class="trends" style="background:rgba(101,119,134,.1);border-radius:1rem;">
-        <div class="trends-header" style="padding:1rem;">
-          <h3 style="margin:0;font-size:1.3rem;">Тренды для вас</h3>
-        </div>
-        <div class="trends-item" style="padding:1rem;border-top:1px solid #38444d;">
-          <h3 style="margin:0 0 0.25rem 0;">#Тренд1</h3>
-          <span style="color:#657786;">12K твитов</span>
-        </div>
-        <div class="trends-item" style="padding:1rem;border-top:1px solid #38444d;">
-          <h3 style="margin:0 0 0.25rem 0;">#Тренд2</h3>
-          <span style="color:#657786;">8.5K твитов</span>
-        </div>
-      </div>
-    </aside>
+<!-- 🆕 API Key форма (для заказчика) -->
+<div id="api-key-panel" style="position:fixed;top:20px;right:20px;z-index:9999;background:rgba(0,0,0,0.95);padding:20px;border-radius:12px;border:2px solid #1da1f2;max-width:300px;">
+  <div style="font-weight:700;color:#1da1f2;margin-bottom:10px;font-size:16px;">🔑 API Ключ</div>
+  <input id="api-key-input" placeholder="demo-key" style="width:100%;padding:12px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:8px;font-size:14px;margin-bottom:10px;box-sizing:border-box;">
+  <div style="font-size:12px;color:#657786;margin-bottom:12px;line-height:1.4;">
+    Тестовые ключи:<br>
+    <code>demo-key</code><br>
+    <code>user1-1234-5678-9abc-def012345678</code>
   </div>
+  <button onclick="setApiKey()" style="width:100%;background:#1da1f2;color:white;border:none;padding:12px;border-radius:8px;font-weight:700;cursor:pointer;font-size:14px;">✅ Подключиться</button>
+</div>
+
+<script>
+function setApiKey() {
+  const key = document.getElementById('api-key-input').value.trim();
+  if (!key) {
+    alert('Введите api-key!');
+    return;
+  }
+  localStorage.setItem('api-key', key);
+  document.getElementById('api-key-panel').style.display = 'none';
+  location.reload();
+}
+
+// Автозаполнение при наличии ключа
+if (localStorage.getItem('api-key')) {
+  document.getElementById('api-key-panel').style.display = 'none';
+}
+</script>
+
+<body>
+  <noscript>
+    <strong>JavaScript отключен. Включите для работы Twitter Clone.</strong>
+  </noscript>
+
+  <div id="app">
+    <!-- СТАТИЧЕСКИЙ Twitter UI (работает без JS) -->
+    <div class="layout" style="display:flex;min-height:100vh;background:#000;">
+      <!-- Sidebar -->
+      <aside style="width:275px;background:#15202b;">
+        <div style="padding:20px;font-size:2rem;color:#1da1f2;">X</div>
+        <div style="padding:12px 20px;display:flex;font-weight:700;">🏠 Главная</div>
+        <div style="position:absolute;bottom:20px;width:90%;padding:12px;background:#1da1f2;color:white;border-radius:999px;text-align:center;cursor:pointer;">Твитнуть</div>
+      </aside>
+
+      <!-- Feed -->
+      <main style="flex:1;padding:20px;">
+        <div style="display:flex;margin-bottom:20px;">
+          <div style="width:48px;height:48px;background:#657786;border-radius:50%;margin-right:12px;"></div>
+          <div style="flex:1;">
+            <textarea style="width:100%;min-height:80px;background:transparent;border:none;color:white;font-size:16px;resize:vertical;" placeholder="Что происходит?"></textarea>
+            <button style="background:#1da1f2;color:white;border:none;padding:8px 16px;border-radius:20px;font-weight:700;">Твитнуть</button>
+          </div>
+        </div>
+
+        <!-- Твит -->
+        <div style="display:flex;border-bottom:1px solid #333;padding:16px 0;">
+          <div style="width:48px;height:48px;background:#657786;border-radius:50%;margin-right:12px;"></div>
+          <div style="flex:1;">
+            <div style="font-weight:700;margin-bottom:4px;">Иван Иванов <span style="color:#657786;">@ivanov</span> <span style="color:#657786;">1ч</span></div>
+            <div style="margin-bottom:16px;color:white;">Привет! Twitter Clone работает! 🎉</div>
+            <div style="display:flex;gap:20px;font-size:14px;">
+              <span>💬 12</span>
+              <span>🔄 34</span>
+              <span style="color:#e0245e;">❤️ 56</span>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Vue.js JS (если нужен) -->
+  <script src="/js/chunk-vendors.398321e0.js"></script>
+  <script src="/js/app.ee2cdef2.js"></script>
 </body>
 </html>
