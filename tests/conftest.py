@@ -12,7 +12,7 @@ from app.api.endpoints import get_current_user
 
 
 class MockUser:
-    """Мок пользователя для тестов"""
+
 
     def __init__(self):
         self.id = 1
@@ -21,7 +21,7 @@ class MockUser:
 
 
 class MockSession:
-    """Полный мок сессии БД"""
+
 
     async def execute(self, query):
         result = MockResult()
@@ -33,26 +33,26 @@ class MockSession:
 
 
 class MockResult:
-    """Мок результата запроса"""
+
 
     def first(self):
         return MockUser()
 
     async def scalar_one_or_none(self):
-        return None  # Для get_current_user
+        return None
 
 
 @pytest_asyncio.fixture
 async def client():
-    """Тестовый клиент с полным мок"""
+
 
     async def mock_get_db():
         yield MockSession()
 
     async def mock_get_current_user(api_key: str):
-        return MockUser()  # 🔥 Возвращаем User объект!
+        return MockUser()
 
-    # Мокаем ОБА dependency
+
     app.dependency_overrides[get_db] = mock_get_db
     app.dependency_overrides[get_current_user] = mock_get_current_user
 

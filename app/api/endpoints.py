@@ -21,7 +21,7 @@ router = APIRouter()
 
 # Инициализация тестовых пользователей
 test_users = {
-    "test": "Пользователь",  # ← Добавил твой api-key!
+    "test": "Пользователь",
     "user1": "Иван Иванов",
     "user2": "Мария Петрова",
 }
@@ -49,7 +49,7 @@ async def get_current_user(
 async def get_me(
     current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
 ):
-    print("🚀 /api/users/me СРАБОТАЛ!")
+
     return {
         "result": True,
         "user": {
@@ -101,10 +101,10 @@ async def get_user_profile(
     }
 
 
-# 🔥 ИСПРАВЛЕННЫЙ GET /tweets (MOCK - БЕЗ SQL ОШИБОК!)
+
 @router.get("/tweets")
 async def get_feed(current_user: User = Depends(get_current_user)):
-    print("📱 Лента твитов (MOCK)!")
+
     return {
         "result": True,
         "tweets": [
@@ -135,7 +135,7 @@ async def create_tweet(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    # 🔥 Берем первое непустое поле
+    # Берем первое непустое поле
     text = (tweet_data or content or "").strip()
     print(f"📝 Form='{tweet_data}' JSON='{content}' → '{text}'")
 
@@ -175,7 +175,7 @@ async def like_tweet(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    # 🔥 Проверяем существующий лайк
+
     result = await db.execute(
         select(likes).where(
             and_(likes.c.user_id == current_user.id, likes.c.tweet_id == tweet_id)
@@ -218,7 +218,7 @@ async def follow_user(
 
     stmt = follows.insert().values(
         follower_id=current_user.id, following_id=user_id
-    )  # ✅ Исправлено!
+    )
     try:
         await db.execute(stmt)
         await db.commit()

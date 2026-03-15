@@ -14,7 +14,7 @@ from app.models import User
 async def lifespan(app_: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-        print("✅ Таблицы созданы!")
+        print("Таблицы созданы!")
     yield
 
 
@@ -28,11 +28,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ✅ РОУТЕР ПОДКЛЮЧЁН!
+# РОУТЕР ПОДКЛЮЧЁН!
 app.include_router(api_router, prefix="/api", tags=["api"])  # api_router!
 
 
-# ✅ ROOT ПЕРВЫМ!
+
 @app.get("/")
 async def root():
     return {"message": "Microblog API готов!"}
@@ -45,8 +45,7 @@ async def favicon():
 
 @app.get("/api/tweets")
 async def get_feed(current_user: User = Depends(get_current_user)):
-    """🔥 ВРЕМЕННЫЙ ФИКС — БЕЗ SQL!"""
-    print("📱 ЛЕНТА ТВИТОВ (mock данные)")
+
     return {
         "result": True,
         "tweets": [
@@ -67,12 +66,12 @@ async def create_tweet(
     tweet_data: str = Form(...), current_user: User = Depends(get_current_user)
 ):
     content = tweet_data.strip()
-    print(f"📝 DEBUG: RAW='{tweet_data}' → CLEAN='{content}'")
+    print(f"DEBUG: RAW='{tweet_data}' → CLEAN='{content}'")
 
     if not content:
         raise HTTPException(400, "Текст твита пустой!")
     if len(content) > 280:
         raise HTTPException(400, "Макс. 280 символов!")
 
-    print(f"✅ ТВИТ СОЗДАН: '{content}' от {current_user.name}")
+    print(f"ТВИТ СОЗДАН: '{content}' от {current_user.name}")
     return {"result": True, "tweet_id": 100}

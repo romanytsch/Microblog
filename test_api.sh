@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "🔥 ТЕСТ БЭКЕНДА ПО ТЗ — НАЧИНАЕМ!"
+echo "ТЕСТ БЭКЕНДА"
 
 # 1. СТАТУС
 echo "1️⃣ Docker: $(docker-compose ps | grep Up | wc -l)/3"
