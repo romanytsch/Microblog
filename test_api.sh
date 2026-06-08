@@ -13,10 +13,10 @@ echo -e "\n3️⃣ TWEETS CRUD:"
 curl -s -w "Status: %{http_code}\n" -H "api-key: test" http://localhost/api/tweets
 
 curl -s -w "Status: %{http_code}\n" -X POST -H "api-key: test" \
-  -d "tweet_data=🧪 Тест твита #1" http://localhost/api/tweets
+  -d "tweet_data=Тест твита #1" http://localhost/api/tweets
 
 curl -s -w "Status: %{http_code}\n" -X POST -H "api-key: test" \
-  -d "tweet_data=🧪 Тест твита #2" http://localhost/api/tweets
+  -d "tweet_data=Тест твита #2" http://localhost/api/tweets
 
 curl -s -w "Status: %{http_code}\n" -H "api-key: test" http://localhost/api/tweets
 
@@ -39,4 +39,4 @@ echo -e "\n7️⃣ БАЗА ДАННЫХ:"
 docker exec -it $(docker-compose ps -q db) psql -U postgres -d microblog \
   -c "SELECT COUNT(*) FROM users; SELECT COUNT(*) FROM tweets; SELECT COUNT(*) FROM likes;"
 
-echo -e "\n✅ ТЕСТИРОВАНИЕ ЗАВЕРШЕНО!"
+echo -e "\n ТЕСТИРОВАНИЕ ЗАВЕРШЕНО!"
