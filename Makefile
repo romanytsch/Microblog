@@ -8,4 +8,4 @@ report:
 	firefox htmlcov/index.html
 
 ci: cov report
-	@echo "✅ Тесты GREEN! Отчёт готов!"
+	@echo "Тесты GREEN! Отчёт готов!"
