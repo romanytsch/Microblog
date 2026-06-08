@@ -110,7 +110,7 @@ async def get_feed(current_user: User = Depends(get_current_user)):
         "tweets": [
             {
                 "id": 1,
-                "content": "🎉 FastAPI + Docker + NGINX = ДИПЛОМ!",
+                "content": "FastAPI + Docker + NGINX",
                 "author_id": 1,
                 "author_name": "Пользователь",
                 "likes_count": 42,
@@ -118,7 +118,7 @@ async def get_feed(current_user: User = Depends(get_current_user)):
             },
             {
                 "id": 2,
-                "content": "Vue.js Frontend работает! 🚀",
+                "content": "Vue.js Frontend работает!",
                 "author_id": 1,
                 "author_name": "Пользователь",
                 "likes_count": 1337,
@@ -137,7 +137,7 @@ async def create_tweet(
 ):
     # Берем первое непустое поле
     text = (tweet_data or content or "").strip()
-    print(f"📝 Form='{tweet_data}' JSON='{content}' → '{text}'")
+    print(f"Form='{tweet_data}' JSON='{content}' → '{text}'")
 
     if not text:
         raise HTTPException(400, "Текст твита пустой!")
@@ -148,7 +148,7 @@ async def create_tweet(
     db.add(tweet)
     await db.commit()
     await db.refresh(tweet)
-    print(f"✅ Твит #{tweet.id}: '{text}'")
+    print(f"Твит #{tweet.id}: '{text}'")
     return {"result": True, "tweet_id": tweet.id}
 
 
@@ -183,7 +183,7 @@ async def like_tweet(
     )
     if result.first():
         print(f"Лайк уже есть: {current_user.id}→{tweet_id}")
-        return {"result": True}  # ✅ Не ошибка!
+        return {"result": True}  # Не ошибка!
 
     stmt = likes.insert().values(user_id=current_user.id, tweet_id=tweet_id)
     await db.execute(stmt)
