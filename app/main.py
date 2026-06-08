@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 
 from app.api.endpoints import get_current_user
-from app.api.endpoints import router as api_router  # ✅ КРИТИЧНО!
+from app.api.endpoints import router as api_router
 from app.database import Base, engine
 from app.models import User
 
@@ -51,7 +51,7 @@ async def get_feed(current_user: User = Depends(get_current_user)):
         "tweets": [
             {
                 "id": 1,
-                "content": "🎉 FastAPI + Docker + NGINX = ДИПЛОМ!",
+                "content": "FastAPI + Docker + NGINX",
                 "author_id": 1,
                 "author_name": "Пользователь",
                 "likes_count": 42,
